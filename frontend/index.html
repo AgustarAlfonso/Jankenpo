@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JankenpoVision — Hand Gesture Rock Paper Scissors</title>
+  <meta name="description" content="Mainkan Rock Paper Scissors dengan deteksi gesture tangan real-time menggunakan AI dan MediaPipe Hands." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=3" />
+</head>
+<body>
+
+  <!-- ══════════════ NAV BAR ══════════════ -->
+  <nav class="navbar" id="navbar" style="display:none;">
+    <button class="nav-back" id="navBack">&#8592; Kembali</button>
+    <div class="nav-steps" id="navSteps">
+      <span class="step" data-step="0">Home</span>
+      <span class="step-sep">›</span>
+      <span class="step" data-step="1">Cara Main</span>
+      <span class="step-sep">›</span>
+      <span class="step" data-step="2">Mode</span>
+      <span class="step-sep">›</span>
+      <span class="step" data-step="3">Game</span>
+      <span class="step-sep">›</span>
+      <span class="step" data-step="4">Hasil</span>
+    </div>
+    <div class="nav-score-mini" id="navScoreMini">
+      <span class="ns-p" id="nsPlayer">0</span>
+      <span class="ns-sep">—</span>
+      <span class="ns-a" id="nsAi">0</span>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       PAGE 0 — LANDING / HOME
+  ══════════════════════════════════════ -->
+  <div class="page active" id="page-home">
+    <div class="hero-bg-grid"></div>
+    <div class="page-inner hero-inner">
+      <div class="hero-badge">✨ Computer Vision Demo</div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Jankenpo</span>
+        <span class="hero-sub">Vision</span>
+      </h1>
+      <p class="hero-desc">
+        Tantang AI dengan gesture tanganmu.<br/>
+        Deteksi real-time · MediaPipe Hands · Python
+      </p>
+      <button class="btn btn--primary btn--xl" id="btnStartHome">
+        Mulai Bermain <span class="btn-arrow">→</span>
+      </button>
+      <div class="hero-tech-pills">
+        <span class="pill">🐍 Python</span>
+        <span class="pill">⚡ FastAPI</span>
+        <span class="pill">👁️ MediaPipe</span>
+        <span class="pill">🎨 Vanilla JS</span>
+      </div>
+    </div>
+    <!-- Floating gesture cards -->
+    <div class="float-cards">
+      <div class="float-card fc-1">✊<span>Batu</span></div>
+      <div class="float-card fc-2">✌️<span>Gunting</span></div>
+      <div class="float-card fc-3">🖐️<span>Kertas</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 1 — HOW TO PLAY
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-howto">
+    <div class="page-inner">
+      <h2 class="page-title gradient-text">Cara Bermain</h2>
+      <p class="page-sub">Ikuti 4 langkah mudah ini untuk bermain</p>
+
+      <div class="howto-steps">
+        <div class="howto-card" style="--i:0">
+          <div class="howto-num">01</div>
+          <div class="howto-icon">🎯</div>
+          <h3>Pilih Mode</h3>
+          <p>Pilih mode webcam real-time atau upload gambar tangan</p>
+        </div>
+        <div class="howto-card" style="--i:1">
+          <div class="howto-num">02</div>
+          <div class="howto-icon">✋</div>
+          <h3>Siapkan Gesture</h3>
+          <p>Posisikan tangan dengan jelas di depan kamera atau siapkan foto</p>
+        </div>
+        <div class="howto-card" style="--i:2">
+          <div class="howto-num">03</div>
+          <div class="howto-icon">📸</div>
+          <h3>Capture & Deteksi</h3>
+          <p>Klik tombol capture, countdown 3-2-1, gesture otomatis terdeteksi</p>
+        </div>
+        <div class="howto-card" style="--i:3">
+          <div class="howto-num">04</div>
+          <div class="howto-icon">🏆</div>
+          <h3>Lihat Hasil</h3>
+          <p>AI memilih gesture, pemenang ditentukan, skor diperbarui</p>
+        </div>
+      </div>
+
+      <div class="gesture-legend">
+        <h3 class="legend-title">Panduan Gesture</h3>
+        <div class="legend-cards">
+          <div class="legend-card">
+            <span class="legend-emoji">✊</span>
+            <strong>BATU</strong>
+            <p>Kepalkan semua jari</p>
+            <div class="legend-beats">Mengalahkan ✌️</div>
+          </div>
+          <div class="legend-card">
+            <span class="legend-emoji">✌️</span>
+            <strong>GUNTING</strong>
+            <p>Buka telunjuk &amp; jari tengah</p>
+            <div class="legend-beats">Mengalahkan 🖐️</div>
+          </div>
+          <div class="legend-card">
+            <span class="legend-emoji">🖐️</span>
+            <strong>KERTAS</strong>
+            <p>Buka semua jari lebar</p>
+            <div class="legend-beats">Mengalahkan ✊</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-actions">
+        <button class="btn btn--ghost" id="btnBackHowto">← Kembali</button>
+        <button class="btn btn--primary" id="btnNextHowto">Pilih Mode →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 2 — MODE SELECT
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-mode">
+    <div class="page-inner">
+      <h2 class="page-title gradient-text">Pilih Mode</h2>
+      <p class="page-sub">Bagaimana kamu ingin bermain?</p>
+
+      <div class="mode-cards">
+        <div class="mode-card" id="modeWebcam">
+          <div class="mode-card__glow"></div>
+          <div class="mode-icon">📷</div>
+          <h3>Webcam Real-Time</h3>
+          <p>Deteksi gesture langsung dari kamera laptopmu</p>
+          <ul class="mode-features">
+            <li>✅ Real-time detection</li>
+            <li>✅ Countdown otomatis</li>
+            <li>✅ Landmark visualization</li>
+          </ul>
+          <button class="btn btn--primary mode-btn" data-mode="webcam">Pilih Mode Ini →</button>
+        </div>
+
+        <div class="mode-card" id="modeUpload">
+          <div class="mode-card__glow mode-card__glow--mg"></div>
+          <div class="mode-icon">📁</div>
+          <h3>Upload Gambar</h3>
+          <p>Upload foto tangan dan lihat gesture terdeteksi</p>
+          <ul class="mode-features">
+            <li>✅ JPG / PNG / WebP</li>
+            <li>✅ Annotated output</li>
+            <li>✅ Tanpa perlu kamera</li>
+          </ul>
+          <button class="btn btn--ghost mode-btn" data-mode="upload">Pilih Mode Ini →</button>
+        </div>
+
+        <div class="mode-card" id="modeMultiplayer">
+          <div class="mode-icon">🌐</div>
+          <h3>Main Online (2 Device)</h3>
+          <p>Bermain real-time dengan temanmu menggunakan link atau kode room</p>
+          <ul class="mode-features">
+            <li>✅ Room Code & Link share</li>
+            <li>✅ WebSockets Real-time</li>
+            <li>✅ Live dual detection</li>
+          </ul>
+          <button class="btn btn--primary mode-btn" data-mode="multiplayer">Pilih Mode Ini →</button>
+        </div>
+      </div>
+
+      <div class="page-actions">
+        <button class="btn btn--ghost" id="btnBackMode">← Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 3 — GAME ARENA
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-game">
+    <div class="page-inner page-inner--game">
+
+      <!-- Score bar -->
+      <div class="score-bar">
+        <div class="sb-item sb-player">
+          <span class="sb-label">🟢 KAMU</span>
+          <span class="sb-val" id="scorePlayer">0</span>
+        </div>
+        <div class="sb-item sb-draw">
+          <span class="sb-label">⚪ SERI</span>
+          <span class="sb-val" id="scoreDraw">0</span>
+        </div>
+        <div class="sb-item sb-ai">
+          <span class="sb-label">🔴 AI</span>
+          <span class="sb-val" id="scoreAi">0</span>
+        </div>
+        <button class="btn btn--mini" id="resetScoreBtn">↺</button>
+      </div>
+
+      <!-- WEBCAM MODE -->
+      <div class="game-content" id="gameModeWebcam">
+        <div class="arena-grid">
+          <!-- Player side -->
+          <div class="arena-side arena-player">
+            <div class="arena-label">👤 KAMU</div>
+            <div class="cam-box" id="camBox">
+              <video id="webcamVideo" autoplay playsinline muted></video>
+              <canvas id="overlayCanvas"></canvas>
+              <div class="cam-placeholder" id="camPlaceholder">
+                <span>📷</span>
+                <p>Kamera belum aktif</p>
+              </div>
+              <div class="countdown-overlay" id="countdownOverlay"></div>
+            </div>
+            <div class="gesture-tag" id="playerTag">
+              <span id="playerTagEmoji">❓</span>
+              <span id="playerTagLabel">Menunggu...</span>
+            </div>
+            <div class="cam-actions">
+              <button class="btn btn--secondary" id="startCamBtn">📷 Aktifkan Kamera</button>
+              <button class="btn btn--danger" id="stopCamBtn" style="display:none">⏹️ Matikan</button>
+            </div>
+            <button class="btn btn--capture" id="captureBtn" disabled>📸 Ambil Gesture</button>
+          </div>
+
+          <!-- VS divider -->
+          <div class="arena-vs">
+            <div class="vs-badge">VS</div>
+            <div class="vs-result" id="vsResult"></div>
+          </div>
+
+          <!-- AI side -->
+          <div class="arena-side arena-ai">
+            <div class="arena-label">🤖 AI</div>
+            <div class="ai-box" id="aiBox">
+              <div class="ai-idle" id="aiIdle">
+                <div class="ai-dots"><span></span><span></span><span></span></div>
+                <p>Siap...</p>
+              </div>
+              <div class="ai-show" id="aiShow" style="display:none">
+                <span class="ai-emoji" id="aiGestureEmoji">❓</span>
+              </div>
+            </div>
+            <div class="gesture-tag" id="aiTag">
+              <span id="aiTagEmoji">🤖</span>
+              <span id="aiTagLabel">Menunggu...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD MODE -->
+      <div class="game-content" id="gameModeUpload" style="display:none">
+        <div class="upload-layout">
+          <div class="upload-drop" id="uploadDrop">
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <div class="upload-drop-inner" id="uploadDropInner">
+              <div class="upload-icon-big">🖼️</div>
+              <p class="upload-title">Drag &amp; drop gambar atau klik</p>
+              <p class="upload-hint">JPG · PNG · WebP</p>
+              <button class="btn btn--ghost" id="chooseFileBtn">Pilih File</button>
+            </div>
+          </div>
+
+          <div class="upload-result-panel" id="uploadResultPanel" style="display:none">
+            <div class="upload-images">
+              <div class="uimg-wrap">
+                <p class="uimg-label">Original</p>
+                <img id="previewImg" alt="Preview" />
+              </div>
+              <div class="uimg-wrap" id="annotatedWrap" style="display:none">
+                <p class="uimg-label">Landmark</p>
+                <img id="annotatedImg" alt="Annotated" />
+              </div>
+            </div>
+            <div class="upload-detected">
+              <span id="uploadEmoji" class="upload-big-emoji">❓</span>
+              <div>
+                <p class="upload-det-label">Terdeteksi:</p>
+                <h3 id="uploadGestureLabel">—</h3>
+              </div>
+              <button class="btn btn--primary" id="playUploadBtn" disabled>🎮 Lawan AI</button>
+            </div>
+          </div>
+
+          <div class="upload-loading" id="uploadLoading" style="display:none">
+            <div class="spinner"></div><p>Mendeteksi gesture...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom actions -->
+      <div class="game-bottom-actions">
+        <button class="btn btn--ghost btn--sm" id="btnBackGame">← Ganti Mode</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 3.5 — MULTIPLAYER LOBBY
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-mp-lobby">
+    <div class="page-inner">
+      <h2 class="page-title gradient-text">Multiplayer Lobby</h2>
+      <p class="page-sub">Buat room baru atau gabung ke room temanmu</p>
+
+      <div class="lobby-setup" id="lobbySetup">
+        <div class="lobby-card" style="background: var(--white); border: var(--border); border-radius: var(--r-xl); padding: 2rem; box-shadow: var(--shadow-lg);">
+          <h3 style="font-family: var(--font-d); margin-bottom: 0.8rem; font-size: 1.1rem;">👤 Nama Kamu</h3>
+          <input type="text" id="mpPlayerNameInput" class="lobby-input" style="width: 100%; padding: 0.75rem 1rem; border: var(--border); border-radius: var(--r-md); font-family: var(--font-b); font-size: 1rem; margin-bottom: 2rem; font-weight: 700;" placeholder="Masukkan nama kamu..." value="Pemain" maxlength="15" />
+          
+          <div class="lobby-actions" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; align-items: center;">
+            <div class="lobby-action-box" style="text-align: center;">
+              <h4 style="font-family: var(--font-d); margin-bottom: 0.5rem;">Buat Room Baru</h4>
+              <p style="font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 1.2rem; font-weight: 600;">Mulai room baru dan undang temanmu</p>
+              <button class="btn btn--primary" id="btnCreateRoom" style="width: 100%; justify-content: center;">🎮 Buat Room</button>
+            </div>
+            
+            <div class="lobby-sep-vertical" style="font-family: var(--font-d); color: #BBBBCC; font-size: 0.9rem;">ATAU</div>
+            
+            <div class="lobby-action-box" style="text-align: center;">
+              <h4 style="font-family: var(--font-d); margin-bottom: 0.5rem;">Gabung Room</h4>
+              <p style="font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 1.2rem; font-weight: 600;">Masukkan kode room temanmu</p>
+              <div class="lobby-join-row" style="display: flex; gap: 0.5rem;">
+                <input type="text" id="mpRoomCodeInput" class="lobby-input code-input" style="flex: 1; padding: 0.7rem; border: var(--border); border-radius: var(--r-md); font-family: var(--font-d); text-align: center; text-transform: uppercase; font-size: 1rem;" placeholder="KODE" maxlength="6" />
+                <button class="btn btn--secondary" id="btnJoinRoom" style="box-shadow: 2px 2px 0 var(--ink);">Gabung</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lobby-waiting" id="lobbyWaiting" style="display:none; margin-top: 1.5rem;">
+        <div class="lobby-card" style="background: var(--white); border: var(--border); border-radius: var(--r-xl); padding: 2rem; box-shadow: var(--shadow-lg); text-align: center;">
+          <div class="room-code-display" style="margin-bottom: 1.5rem;">
+            <p style="font-family: var(--font-d); font-size: 0.8rem; color: var(--ink-soft);">KODE ROOM KAMU</p>
+            <h2 id="roomCodeVal" style="font-family: var(--font-d); font-size: 3rem; color: var(--coral); margin: 0.5rem 0; letter-spacing: 0.1em; -webkit-text-stroke: 1px var(--ink);">KODE12</h2>
+            <button class="btn btn--ghost btn--sm" id="btnCopyLink" style="margin: 0 auto;">📋 Salin Link Room</button>
+          </div>
+          
+          <div class="players-list" style="display: flex; flex-direction: column; gap: 0.8rem; background: var(--cream); border: var(--border); border-radius: var(--r-lg); padding: 1.2rem; margin-bottom: 1.5rem; text-align: left;">
+            <div class="player-slot-status" id="slotPlayer1" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700;">
+              <span class="slot-icon">🟢</span>
+              <span class="slot-name" id="slotP1Name">Player 1</span>
+              <span class="slot-desc" style="font-size: 0.8rem; color: var(--ink-soft); font-weight: 500;">(Kamu)</span>
+            </div>
+            <div class="player-slot-status" id="slotPlayer2" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700;">
+              <span class="slot-icon" id="slotP2Icon">⚪</span>
+              <span class="slot-name" id="slotP2Name">Menunggu Lawan...</span>
+              <span class="slot-desc" id="slotP2Desc" style="font-size: 0.8rem; color: var(--ink-soft); font-weight: 500;"></span>
+            </div>
+          </div>
+
+          <div class="lobby-status-msg" id="lobbyStatusMsg" style="font-weight: 700; color: var(--ink-soft); margin-bottom: 1rem;">
+            Tunggu sampai temanmu masuk ke room...
+          </div>
+        </div>
+      </div>
+
+      <div class="page-actions">
+        <button class="btn btn--ghost" id="btnBackLobby">← Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 3.6 — MULTIPLAYER GAME ARENA
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-mp-game">
+    <div class="page-inner page-inner--game">
+      <div class="score-bar">
+        <div class="sb-item sb-player">
+          <span class="sb-label" id="mpScoreP1Label">🟢 KAMU</span>
+          <span class="sb-val" id="mpScorePlayer">0</span>
+        </div>
+        <div class="sb-item sb-draw">
+          <span class="sb-label">⚪ SERI</span>
+          <span class="sb-val" id="mpScoreDraw">0</span>
+        </div>
+        <div class="sb-item sb-ai">
+          <span class="sb-label" id="mpScoreP2Label">🔴 LAWAN</span>
+          <span class="sb-val" id="mpScoreOpponent">0</span>
+        </div>
+      </div>
+
+      <div class="game-content">
+        <div class="arena-grid">
+          <!-- Local Player Side -->
+          <div class="arena-side arena-player">
+            <div class="arena-label" id="mpLocalLabel">👤 KAMU</div>
+            
+            <div class="cam-box" id="mpCamBox">
+              <video id="mpWebcamVideo" autoplay playsinline muted style="display:none; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+              <canvas id="mpOverlayCanvas" style="display:none; position: absolute; inset: 0; width: 100%; height: 100%; transform: scaleX(-1); pointer-events: none;"></canvas>
+              
+              <!-- Local input selector -->
+              <div class="mp-input-selector" id="mpInputSelector" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; padding: 1rem; text-align: center;">
+                <p style="font-weight: 700; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.3rem;">Pilih Input Gesture Kamu:</p>
+                <button class="btn btn--primary btn--sm" id="mpBtnUseCam" style="width: 80%; justify-content: center;">📷 Gunakan Kamera</button>
+                <button class="btn btn--ghost btn--sm" id="mpBtnUseUpload" style="width: 80%; justify-content: center;">📁 Upload Gambar</button>
+              </div>
+
+              <!-- Upload zone for multiplayer -->
+              <div class="mp-upload-zone" id="mpUploadZone" style="display:none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: var(--blue-lt); cursor: pointer;">
+                <input type="file" id="mpFileInput" accept="image/*" hidden />
+                <span style="font-size: 2.5rem;">📁</span>
+                <p style="font-weight: 700; font-size: 0.8rem; color: var(--ink-soft);">Klik untuk Upload Foto</p>
+                <p style="font-size: 0.7rem; color: var(--ink-soft);" id="mpUploadStatus">JPG / PNG / WebP</p>
+              </div>
+              
+              <div class="countdown-overlay" id="mpCountdownOverlay"></div>
+            </div>
+
+            <div class="cam-actions" id="mpCamActions" style="display:none;">
+              <button class="btn btn--danger btn--sm" id="mpStopCamBtn">⏹️ Matikan Kamera</button>
+            </div>
+            
+            <div class="gesture-tag" id="mpPlayerTag">
+              <span id="mpPlayerTagEmoji">❓</span>
+              <span id="mpPlayerTagLabel">Siapkan tangan...</span>
+            </div>
+
+            <!-- Submit action -->
+            <button class="btn btn--capture" id="mpCaptureBtn" disabled>📸 Kirim Gesture</button>
+          </div>
+
+          <!-- VS Divider -->
+          <div class="arena-vs">
+            <div class="vs-badge">VS</div>
+            <div class="vs-result" id="mpVsResult"></div>
+          </div>
+
+          <!-- Opponent Side -->
+          <div class="arena-side arena-ai">
+            <div class="arena-label" id="mpOpponentLabel">👤 LAWAN</div>
+            <div class="ai-box" id="mpOpponentBox">
+              <div class="ai-idle" id="mpOpponentIdle">
+                <div class="ai-dots"><span></span><span></span><span></span></div>
+                <p id="mpOpponentStatusText" style="font-family: var(--font-d); font-size: 0.8rem; color: var(--ink-soft);">Siap...</p>
+              </div>
+              <div class="ai-show" id="mpOpponentShow" style="display:none">
+                <span class="ai-emoji" id="mpOpponentEmoji">❓</span>
+              </div>
+            </div>
+            <div class="gesture-tag" id="mpOpponentTag">
+              <span id="mpOpponentTagEmoji">👤</span>
+              <span id="mpOpponentTagLabel">Menunggu...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-bottom-actions">
+        <button class="btn btn--ghost btn--sm" id="btnLeaveMpGame">🏳️ Keluar Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE 4 — RESULT
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-result">
+    <div class="page-inner result-inner">
+      <div class="result-badge" id="resultBadge"></div>
+      <h2 class="result-title" id="resultTitle"></h2>
+
+      <div class="result-showdown">
+        <div class="showdown-side showdown-player">
+          <div class="showdown-emoji" id="resPlayerEmoji"></div>
+          <div class="showdown-name">Kamu</div>
+          <div class="showdown-gesture" id="resPlayerGesture"></div>
+        </div>
+        <div class="showdown-vs">VS</div>
+        <div class="showdown-side showdown-ai">
+          <div class="showdown-emoji" id="resAiEmoji"></div>
+          <div class="showdown-name">AI</div>
+          <div class="showdown-gesture" id="resAiGesture"></div>
+        </div>
+      </div>
+
+      <div class="result-scoreboard">
+        <div class="rs-item rs-player">
+          <span class="rs-val" id="rsPlayer">0</span>
+          <span class="rs-label">Kamu</span>
+        </div>
+        <span class="rs-sep">:</span>
+        <div class="rs-item rs-draw">
+          <span class="rs-val" id="rsDraw">0</span>
+          <span class="rs-label">Seri</span>
+        </div>
+        <span class="rs-sep">:</span>
+        <div class="rs-item rs-ai">
+          <span class="rs-val" id="rsAi">0</span>
+          <span class="rs-label">AI</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn btn--primary" id="btnPlayAgain">🔄 Main Lagi</button>
+        <button class="btn btn--ghost" id="btnChangeMode">🕹️ Ganti Mode</button>
+        <button class="btn btn--ghost" id="btnBackHome">🏠 Beranda</button>
+      </div>
+
+      <!-- Particle canvas -->
+      <canvas class="particle-canvas" id="particleCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Load app as module -->
+  <script type="module" src="app.js?v=10"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { HandLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { AFKManager } from "./afkTimer.js";
 
 // ⚠️ PASTE KONFIGURASI FIREBASE KAMU DI SINI ⚠️
 const firebaseConfig = {
@@ -209,6 +210,14 @@ let mpDetectedGesture = null;
 let mpStream = null;
 let mpCamActive = false;
 let mpIsCapturing = false;
+
+// Initialize AFK Manager (5 minutes timeout)
+const afkManager = new AFKManager(5 * 60 * 1000, () => {
+  if (mpRoomCode) {
+    const roomRef = ref(db, `rooms/${mpRoomCode}`);
+    update(roomRef, { afk_kicked: true });
+  }
+});
 
 // ═══════════════════════════════════════════
 // PAGE NAVIGATION
@@ -931,6 +940,14 @@ function initMultiplayerFirebase(code, slot, name) {
 
     const roomState = snapshot.val();
 
+    if (roomState.afk_kicked) {
+      showToast('⚠️ Room dihapus karena AFK selama 5 menit.');
+      leaveMpRoom();
+      return;
+    }
+
+    afkManager.reset();
+
     // Update UI based on room state
     updateLobbyUI(roomState);
     updateMpGameUI(roomState);
@@ -1015,6 +1032,8 @@ function leaveMpRoom() {
     fbUnsubscribe();
     fbUnsubscribe = null;
   }
+
+  afkManager.clear();
 
   if (mpRoomCode) {
     const roomRef = ref(db, `rooms/${mpRoomCode}`);

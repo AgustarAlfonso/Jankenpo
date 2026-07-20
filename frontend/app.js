@@ -223,14 +223,29 @@ const afkManager = new AFKManager(5 * 60 * 1000, () => {
 });
 
 // Initialize Rematch Manager
-const rematchManager = new RematchManager(update, showToast);
+const rematchManager = new RematchManager(update, (msg) => {
+  popupManager.showConfirm('REMATCH', msg, 
+    () => {
+      // TERIMA
+      if ($('btnPlayAgain')) {
+        $('btnPlayAgain').click();
+      }
+    },
+    () => {
+      // TOLAK
+      leaveMpRoom();
+      goTo(4);
+    }
+  );
+});
 
 // Initialize Popup & Lifecycle Managers
 const popupManager = new PopupManager(
   $('nbPopupOverlay'),
   $('nbPopupTitle'),
   $('nbPopupMsg'),
-  $('nbPopupBtn')
+  $('nbPopupBtn'),
+  $('nbPopupBtnCancel')
 );
 
 const roomLifecycleManager = new RoomLifecycleManager(
@@ -954,8 +969,14 @@ function initMultiplayerFirebase(code, slot, name) {
     const roomState = snapshot.val();
 
     if (roomState.afk_kicked) {
-      showToast('⚠️ Room dihapus karena AFK selama 5 menit.');
-      leaveMpRoom();
+      popupManager.show(
+        'AFK TIMEOUT', 
+        'Room dihapus karena tidak ada aktivitas selama 5 menit.', 
+        () => {
+          leaveMpRoom();
+          goTo(4); // Go to Lobby Setup
+        }
+      );
       return;
     }
 
@@ -1005,7 +1026,9 @@ function initMultiplayerFirebase(code, slot, name) {
     }
 
     if (roomState.round_result) {
-      displayMpRoundResult(roomState);
+      if (PAGES[currentPage] === 'page-mp-game') {
+        displayMpRoundResult(roomState);
+      }
 
       // Handle play again logic via RematchManager
       if (PAGES[currentPage] === 'page-result') {

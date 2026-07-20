@@ -1,5 +1,6 @@
 import { HandLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
 import { handLandmarker, runningMode, setRunningMode, createHandLandmarker, detectGestureLocal } from "./handDetection.js";
+import { $, el } from "./domRefs.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { AFKManager } from "./afkTimer.js";
@@ -20,93 +21,7 @@ let currentPage = 0;
 let gameMode = 'webcam'; // 'webcam' | 'upload' | 'multiplayer'
 
 // ── DOM shortcuts ─────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const el = {
-  navbar: $('navbar'), navBack: $('navBack'), navSteps: document.querySelectorAll('.step'),
-  nsPlayer: $('nsPlayer'), nsAi: $('nsAi'),
-  // Single Player Game
-  webcamVideo: $('webcamVideo'), overlayCanvas: $('overlayCanvas'),
-  camBox: $('camBox'), camPlaceholder: $('camPlaceholder'),
-  countdownOverlay: $('countdownOverlay'),
-  startCamBtn: $('startCamBtn'), stopCamBtn: $('stopCamBtn'),
-  captureBtn: $('captureBtn'),
-  playerTag: $('playerTag'), playerTagEmoji: $('playerTagEmoji'), playerTagLabel: $('playerTagLabel'),
-  aiIdle: $('aiIdle'), aiShow: $('aiShow'), aiGestureEmoji: $('aiGestureEmoji'),
-  aiTag: $('aiTag'), aiTagEmoji: $('aiTagEmoji'), aiTagLabel: $('aiTagLabel'),
-  vsResult: $('vsResult'),
-  scorePlayer: $('scorePlayer'), scoreDraw: $('scoreDraw'), scoreAi: $('scoreAi'),
-  resetScoreBtn: $('resetScoreBtn'),
-  spInputSelector: $('spInputSelector'), spBtnUseCam: $('spBtnUseCam'), spBtnUseUpload: $('spBtnUseUpload'),
-  gameModeWebcam: $('gameModeWebcam'), gameModeUpload: $('gameModeUpload'),
-  // Single Player Upload
-  uploadDrop: $('uploadDrop'), uploadDropInner: $('uploadDropInner'),
-  fileInput: $('fileInput'), chooseFileBtn: $('chooseFileBtn'),
-  uploadResultPanel: $('uploadResultPanel'), previewImg: $('previewImg'),
-  annotatedImg: $('annotatedImg'), annotatedWrap: $('annotatedWrap'),
-  uploadEmoji: $('uploadEmoji'), uploadGestureLabel: $('uploadGestureLabel'),
-  playUploadBtn: $('playUploadBtn'), uploadLoading: $('uploadLoading'),
-  // Multiplayer Lobby
-  mpPlayerNameInput: $('mpPlayerNameInput'),
-  btnRandomName: $('btnRandomName'),
-  btnCreateRoom: $('btnCreateRoom'),
-  mpRoomCodeInput: $('mpRoomCodeInput'),
-  btnJoinRoom: $('btnJoinRoom'),
-  lobbySetup: $('lobbySetup'),
-  lobbyWaiting: $('lobbyWaiting'),
-  roomCodeVal: $('roomCodeVal'),
-  btnCopyLink: $('btnCopyLink'),
-  slotPlayer1: $('slotPlayer1'),
-  slotP1Name: $('slotP1Name'),
-  slotPlayer2: $('slotPlayer2'),
-  slotP2Name: $('slotP2Name'),
-  slotP2Icon: $('slotP2Icon'),
-  slotP2Desc: $('slotP2Desc'),
-  lobbyStatusMsg: $('lobbyStatusMsg'),
-  btnStartMpGame: $('btnStartMpGame'),
-  btnBackLobby: $('btnBackLobby'),
-  // Multiplayer Game Arena
-  mpScoreP1Label: $('mpScoreP1Label'),
-  mpScorePlayer: $('mpScorePlayer'),
-  mpScoreDraw: $('mpScoreDraw'),
-  mpScoreP2Label: $('mpScoreP2Label'),
-  mpScoreOpponent: $('mpScoreOpponent'),
-  mpLocalLabel: $('mpLocalLabel'),
-  mpOpponentLabel: $('mpOpponentLabel'),
-  mpCamBox: $('mpCamBox'),
-  mpWebcamVideo: $('mpWebcamVideo'),
-  mpOverlayCanvas: $('mpOverlayCanvas'),
-  mpInputSelector: $('mpInputSelector'),
-  mpBtnUseCam: $('mpBtnUseCam'),
-  mpBtnUseUpload: $('mpBtnUseUpload'),
-  mpUploadZone: $('mpUploadZone'),
-  mpFileInput: $('mpFileInput'),
-  mpUploadStatus: $('mpUploadStatus'),
-  mpCountdownOverlay: $('mpCountdownOverlay'),
-  mpCamActions: $('mpCamActions'),
-  mpStopCamBtn: $('mpStopCamBtn'),
-  mpPlayerTag: $('mpPlayerTag'),
-  mpPlayerTagEmoji: $('mpPlayerTagEmoji'),
-  mpPlayerTagLabel: $('mpPlayerTagLabel'),
-  mpCaptureBtn: $('mpCaptureBtn'),
-  mpVsResult: $('mpVsResult'),
-  mpOpponentBox: $('mpOpponentBox'),
-  mpOpponentIdle: $('mpOpponentIdle'),
-  mpOpponentStatusText: $('mpOpponentStatusText'),
-  mpOpponentShow: $('mpOpponentShow'),
-  mpOpponentEmoji: $('mpOpponentEmoji'),
-  mpOpponentTag: $('mpOpponentTag'),
-  mpOpponentTagEmoji: $('mpOpponentTagEmoji'),
-  mpOpponentTagLabel: $('mpOpponentTagLabel'),
-  btnLeaveMpGame: $('btnLeaveMpGame'),
-  // Result Page
-  resultBadge: $('resultBadge'), resultTitle: $('resultTitle'),
-  resPlayerEmoji: $('resPlayerEmoji'), resPlayerGesture: $('resPlayerGesture'),
-  resAiEmoji: $('resAiEmoji'), resAiGesture: $('resAiGesture'),
-  rsPlayer: $('rsPlayer'), rsDraw: $('rsDraw'), rsAi: $('rsAi'),
-  rsPlayerLabel: $('rsPlayerLabel'), rsAiLabel: $('rsAiLabel'),
-  particleCanvas: $('particleCanvas'),
-  toast: $('toast'),
-};
+
 
 // ── State ─────────────────────────────────────────────────────
 let stream = null;

@@ -22,7 +22,7 @@ describe('JankenpoVision Multiplayer Lobby E2E', () => {
   it('should allow Player 1 to create a room and Player 2 to join', async () => {
     // === PLAYER 1 ===
     console.log('Player 1: Navigating to local server...');
-    await page1.goto('http://localhost:8000', { waitUntil: 'domcontentloaded' });
+    await page1.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
     await new Promise(r => setTimeout(r, 1000));
     
     console.log('Player 1: Navigating to Mode Selection...');
@@ -50,7 +50,7 @@ describe('JankenpoVision Multiplayer Lobby E2E', () => {
     
     // === PLAYER 2 ===
     console.log(`Player 2: Navigating to local server...`);
-    await page2.goto(`http://localhost:8000`, { waitUntil: 'domcontentloaded' });
+    await page2.goto(`http://localhost:3000`, { waitUntil: 'domcontentloaded' });
     
     console.log('Player 2: Navigating to Mode Selection...');
     await page2.evaluate(() => document.querySelector('#btnStartHome').click());

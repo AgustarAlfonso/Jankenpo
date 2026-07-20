@@ -3,7 +3,7 @@ jest.setTimeout(30000);
 describe('JankenpoVision Core Logic Tests', () => {
   beforeAll(async () => {
     // Navigate to the local server
-    await page.goto('http://localhost:8000', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
   });
 
   it('should detect BATU correctly', async () => {

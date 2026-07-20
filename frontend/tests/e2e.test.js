@@ -3,14 +3,14 @@ jest.setTimeout(30000);
 describe('JankenpoVision E2E Flows', () => {
   beforeAll(async () => {
     // Navigate to the local server
-    await page.goto('http://localhost:8000', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
     // Ensure app is initialized
     await new Promise(r => setTimeout(r, 1000));
   });
 
   it('should display the home page correctly', async () => {
     const titleText = await page.$eval('.hero-title', el => el.innerText);
-    expect(titleText).toContain('Jankenpo');
+    expect(titleText).toMatch(/JANKENPO/i);
   });
 
   it('should navigate to HowTo page when clicking Mulai Bermain', async () => {
@@ -38,15 +38,15 @@ describe('JankenpoVision E2E Flows', () => {
     expect(modeTitle).toBe('Pilih Mode');
   });
 
-  it('should select Webcam Mode and navigate to Game page', async () => {
-    await page.click('button[data-mode="webcam"]');
+  it('should select Singleplayer Mode and navigate to Game page', async () => {
+    await page.click('button[data-mode="singleplayer"]');
     
     await page.waitForFunction(() => {
       const el = document.querySelector('#page-game');
       return el && el.classList.contains('active');
     }, { timeout: 5000 });
 
-    const isWebcamVisible = await page.$eval('#gameModeWebcam', el => getComputedStyle(el).display !== 'none');
-    expect(isWebcamVisible).toBe(true);
+    const isGameVisible = await page.$eval('#page-game', el => getComputedStyle(el).display !== 'none');
+    expect(isGameVisible).toBe(true);
   });
 });

@@ -1,15 +1,15 @@
-/* ═══════════════════════════════════════════════════════════════
-   JankenpoVision — Cartoonic / Playful UI
-   Tone: Toy-like · Editorial · Fun arcade energy
+﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   JankenpoVision â€” Cartoonic / Playful UI
+   Tone: Toy-like Â· Editorial Â· Fun arcade energy
    Domain: Kartu permainan, komik, playground, arcade
-   ═══════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Color world — warm, bright, arcade */
+  /* Color world â€” warm, bright, arcade */
   --cream:    #FFFBF0;
   --coral:    #FF5C5C;
   --coral-lt: #FFE5E5;
@@ -51,7 +51,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Page System ─────────────────────────────────────────────── */
+/* â”€â”€ Page System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page {
   position: fixed;
   inset: 0;
@@ -88,7 +88,7 @@ html, body {
 }
 .page-inner--game { max-width: 960px; }
 
-/* ── Navbar ──────────────────────────────────────────────────── */
+/* â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -149,7 +149,7 @@ html, body {
 .ns-a { color: var(--coral); -webkit-text-stroke: 1px var(--ink); text-shadow: 2px 2px 0 var(--ink); }
 .ns-sep { color: var(--ink-soft); font-size: 1.2rem; }
 
-/* ── Typography ──────────────────────────────────────────────── */
+/* â”€â”€ Typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page-title {
   font-family: var(--font-d);
   font-size: clamp(2rem, 5vw, 3rem);
@@ -176,7 +176,7 @@ html, body {
   color: var(--coral);
 }
 
-/* ── Buttons ─────────────────────────────────────────────────── */
+/* â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.7rem 1.6rem;
@@ -224,9 +224,9 @@ html, body {
 .btn--mini:active { transform: translate(6px,6px); box-shadow: none; }
 .btn-arrow { font-size: 1rem; }
 
-/* ══════════════════════════════════════
-   PAGE 0 — HERO (Arcade Style)
-══════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PAGE 0 â€” HERO (Arcade Style)
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 #page-home { align-items: center; padding: 0; background: var(--cream); }
 
 /* Arcade Grid Background */
@@ -369,9 +369,9 @@ html, body {
   box-shadow: 2px 2px 0 var(--ink);
 }
 
-/* ══════════════════════════════════════
-   PAGE 1 — HOW TO PLAY
-══════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PAGE 1 â€” HOW TO PLAY
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .howto-steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
@@ -432,9 +432,9 @@ html, body {
   font-weight: 700; color: var(--ink);
 }
 
-/* ══════════════════════════════════════
-   PAGE 2 — MODE SELECT
-══════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PAGE 2 â€” MODE SELECT
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .mode-cards {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem; margin-bottom: 1rem;
@@ -466,9 +466,9 @@ html, body {
 .mode-features li { font-size: 0.85rem; font-weight: 700; color: var(--ink); }
 .mode-btn { width: 100%; justify-content: center; }
 
-/* ══════════════════════════════════════
-   PAGE 3 — GAME
-══════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PAGE 3 â€” GAME
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .score-bar {
   display: flex; align-items: stretch; justify-content: center;
   gap: 1.2rem; margin-bottom: 2rem; flex-wrap: wrap;
@@ -598,7 +598,7 @@ html, body {
 
 .game-bottom-actions { display:flex; justify-content:center; margin-top:1.2rem; }
 
-/* ── Upload ──────────────────────────────────────────────────── */
+/* â”€â”€ Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .upload-layout { display:flex; flex-direction:column; gap:1.5rem; align-items:center; }
 .upload-drop {
   width:100%; max-width:560px; min-height:200px;
@@ -639,9 +639,9 @@ html, body {
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* ══════════════════════════════════════
-   PAGE 4 — RESULT
-══════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PAGE 4 â€” RESULT
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 #page-result { 
   /* Inherit padding and align-items from .page to avoid clipping under navbar */
 }
@@ -708,7 +708,7 @@ html, body {
 
 .particle-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; width:100%; height:100%; }
 
-/* ── Toast ───────────────────────────────────────────────────── */
+/* â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .toast {
   position:fixed; bottom:2rem; left:50%;
   transform:translateX(-50%) translateY(100px);
@@ -720,7 +720,7 @@ html, body {
 }
 .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
 
-/* ── Animations ──────────────────────────────────────────────── */
+/* â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes popIn {
   0%   { opacity:0; transform:scale(0.85) translateY(12px); }
   100% { opacity:1; transform:scale(1) translateY(0); }
@@ -732,7 +732,7 @@ html, body {
   100% { transform:scale(0.85); opacity:0; }
 }
 
-/* ── Responsive ──────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width:700px) {
   .arena-grid { grid-template-columns:1fr; justify-items:center; }
   .arena-vs { flex-direction:row; padding-top:0; }
@@ -745,7 +745,7 @@ html, body {
   .lobby-sep-vertical { display: none; }
 }
 
-/* ── Multiplayer Styles ──────────────────────────────────────── */
+/* â”€â”€ Multiplayer Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .lobby-card {
   background: var(--white);
   border: 4px solid var(--ink);
@@ -963,9 +963,9 @@ html, body {
   object-fit: contain;
 }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    NEO-BRUTALISM POPUP
-   ═══════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .nb-popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1077,5 +1077,18 @@ html, body {
      t r a n s f o r m :   t r a n s l a t e ( 6 p x ,   6 p x ) ; 
      b o x - s h a d o w :   0 p x   0 p x   0   v a r ( - - i n k ) ; 
  } 
-  
  
+ 
+ 
+
+
+/* Particles Overlay */
+.particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}

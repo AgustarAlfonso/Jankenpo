@@ -2,6 +2,7 @@ import { HandLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdel
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { AFKManager } from "./afkTimer.js";
+import { RematchManager } from "./rematchManager.js";
 
 // ⚠️ PASTE KONFIGURASI FIREBASE KAMU DI SINI ⚠️
 const firebaseConfig = {
@@ -219,6 +220,9 @@ const afkManager = new AFKManager(5 * 60 * 1000, () => {
   }
 });
 
+// Initialize Rematch Manager
+const rematchManager = new RematchManager(update, showToast);
+
 // ═══════════════════════════════════════════
 // PAGE NAVIGATION
 // ═══════════════════════════════════════════
@@ -345,27 +349,12 @@ $('btnPlayAgain').addEventListener('click', async () => {
   stopParticles();
   if (gameMode === 'multiplayer') {
     $('btnPlayAgain').disabled = true;
-    $('btnPlayAgain').textContent = 'Menunggu Lawan...';
+    $('btnPlayAgain').textContent = 'Tunggu pemain lain';
 
     if (mpRoomCode) {
       const roomRef = ref(db, `rooms/${mpRoomCode}`);
-      // Host cleans up the room round state
-      if (mpSlot === 'player1') {
-        await update(roomRef, {
-          "players/player1/gesture": null,
-          "players/player1/submitted": false,
-          "players/player2/gesture": null,
-          "players/player2/submitted": false,
-          "round_result": null,
-          "state": "READY"
-        });
-      } else {
-        // Player 2 just waits for host to clear
-        await update(roomRef, {
-          "players/player2/gesture": null,
-          "players/player2/submitted": false
-        });
-      }
+      // Send "play again" signal using RematchManager
+      await rematchManager.requestRematch(roomRef, mpSlot);
     }
   } else {
     resetPlayerUI(); resetAIUI();
@@ -993,8 +982,15 @@ function initMultiplayerFirebase(code, slot, name) {
 
     if (roomState.round_result) {
       displayMpRoundResult(roomState);
+
+      // Handle play again logic via RematchManager
+      if (PAGES[currentPage] === 'page-result') {
+        await rematchManager.checkRematchState(roomState, roomRef, mpSlot);
+      }
+
     } else if (PAGES[currentPage] === 'page-result' && roomState.state === 'READY' && !roomState.players.player1.gesture && !roomState.players.player2.gesture) {
       // Both cleared gestures, round reset
+      rematchManager.resetToast();
       resetMpArenaForNextRound();
       goTo(5, { keepCamera: true });
     }

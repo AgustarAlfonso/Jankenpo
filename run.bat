@@ -4,10 +4,12 @@ echo  ╔═══════════════════════�
 echo  ║     JankenpoVision — Starting Server     ║
 echo  ╚══════════════════════════════════════════╝
 echo.
-echo  Server berjalan di: http://localhost:8000
+echo  Menjalankan static server...
+echo  Buka browser di: http://localhost:3000
 echo  Tekan Ctrl+C untuk berhenti.
 echo.
 
-python -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+cd frontend
+npx live-server --port=3000
 
 pause

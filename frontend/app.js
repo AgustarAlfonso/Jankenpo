@@ -35,6 +35,17 @@ const createHandLandmarker = async () => {
     numHands: 1
   });
   console.log("MediaPipe Hand Landmarker initialized locally!");
+
+  // WARM-UP THE MODEL: Lakukan deteksi kosong agar proses cold-start (loading lama) terjadi di background saat web baru dibuka.
+  try {
+    const dummyCanvas = document.createElement('canvas');
+    dummyCanvas.width = 1;
+    dummyCanvas.height = 1;
+    handLandmarker.detect(dummyCanvas);
+    console.log("Model warmed up! Deteksi pertama nanti akan instan.");
+  } catch(e) {
+    console.warn("Pemanasan gagal, cold-start mungkin tetap terjadi", e);
+  }
 };
 createHandLandmarker();
 
@@ -107,6 +118,7 @@ const el = {
   vsResult: $('vsResult'),
   scorePlayer: $('scorePlayer'), scoreDraw: $('scoreDraw'), scoreAi: $('scoreAi'),
   resetScoreBtn: $('resetScoreBtn'),
+  spInputSelector: $('spInputSelector'), spBtnUseCam: $('spBtnUseCam'), spBtnUseUpload: $('spBtnUseUpload'),
   gameModeWebcam: $('gameModeWebcam'), gameModeUpload: $('gameModeUpload'),
   // Single Player Upload
   uploadDrop: $('uploadDrop'), uploadDropInner: $('uploadDropInner'),
@@ -117,6 +129,7 @@ const el = {
   playUploadBtn: $('playUploadBtn'), uploadLoading: $('uploadLoading'),
   // Multiplayer Lobby
   mpPlayerNameInput: $('mpPlayerNameInput'),
+  btnRandomName: $('btnRandomName'),
   btnCreateRoom: $('btnCreateRoom'),
   mpRoomCodeInput: $('mpRoomCodeInput'),
   btnJoinRoom: $('btnJoinRoom'),
@@ -172,6 +185,7 @@ const el = {
   resPlayerEmoji: $('resPlayerEmoji'), resPlayerGesture: $('resPlayerGesture'),
   resAiEmoji: $('resAiEmoji'), resAiGesture: $('resAiGesture'),
   rsPlayer: $('rsPlayer'), rsDraw: $('rsDraw'), rsAi: $('rsAi'),
+  rsPlayerLabel: $('rsPlayerLabel'), rsAiLabel: $('rsAiLabel'),
   particleCanvas: $('particleCanvas'),
   toast: $('toast'),
 };
@@ -184,7 +198,7 @@ let uploadDetectedGesture = null;
 let lastRoundData = null;
 
 let localScores = { player: 0, draw: 0, ai: 0 };
-
+let spInputMode = 'webcam'; // 'webcam' | 'upload'
 
 // Multiplayer state
 let ws = null;
@@ -222,7 +236,7 @@ function goTo(pageIndex, opts = {}) {
     el.navbar.style.display = 'flex';
     el.navSteps.forEach((s, i) => {
       // Adjusted steps display for multiplayer lobby and game
-      let activeIndex = pageIndex - 1;
+      let activeIndex = pageIndex;
       if (pageIndex === 4) activeIndex = 2; // Lobby is Mode select step
       if (pageIndex === 5) activeIndex = 3; // MP Game is Game step
       if (pageIndex === 6) activeIndex = 4; // Result step
@@ -270,20 +284,36 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
       el.lobbySetup.style.display = 'block';
       el.lobbyWaiting.style.display = 'none';
       goTo(4);
-    } else {
-      setupGameMode(gameMode);
+    } else if (gameMode === 'singleplayer') {
+      setupGameMode(spInputMode); // Use current input mode
       goTo(3);
     }
   });
+});
+
+// Single Player Input Selector
+el.spBtnUseCam.addEventListener('click', () => {
+  spInputMode = 'webcam';
+  setupGameMode('webcam');
+});
+el.spBtnUseUpload.addEventListener('click', () => {
+  spInputMode = 'upload';
+  setupGameMode('upload');
 });
 
 function setupGameMode(mode) {
   if (mode === 'webcam') {
     el.gameModeWebcam.style.display = 'block';
     el.gameModeUpload.style.display = 'none';
+    el.spBtnUseCam.classList.replace('btn--ghost', 'btn--primary');
+    el.spBtnUseUpload.classList.replace('btn--primary', 'btn--ghost');
+    if (currentPage === 3) startCamera();
   } else {
     el.gameModeWebcam.style.display = 'none';
     el.gameModeUpload.style.display = 'block';
+    el.spBtnUseCam.classList.replace('btn--primary', 'btn--ghost');
+    el.spBtnUseUpload.classList.replace('btn--ghost', 'btn--primary');
+    stopCamera();
     resetUpload();
   }
   resetPlayerUI();
@@ -547,34 +577,46 @@ function showResultPage(data) {
   el.resultTitle.className = `result-title ${cfg.cls}`;
 
   if (gameMode === 'multiplayer') {
-    // Multiplayer results map Player 1 and Player 2 labels
-    const p1Name = el.mpScoreP1Label.textContent.replace('🟢 ', '');
-    const p2Name = el.mpScoreP2Label.textContent.replace('🔴 ', '');
+    // Left side (You), Right side (Opponent)
+    const isP1 = (mpSlot === 'player1');
+    const myGesture = isP1 ? data.player1_gesture : data.player2_gesture;
+    const oppGesture = isP1 ? data.player2_gesture : data.player1_gesture;
+    
+    const myScore = isP1 ? data.score.player1 : data.score.player2;
+    const oppScore = isP1 ? data.score.player2 : data.score.player1;
 
-    el.resPlayerEmoji.textContent = G_EMOJI[data.player1_gesture] || '❓';
-    el.resPlayerGesture.textContent = data.player1_gesture;
-    el.resAiEmoji.textContent = G_EMOJI[data.player2_gesture] || '❓';
-    el.resAiGesture.textContent = data.player2_gesture;
+    // Names are already mapped to P1 = Local, P2 = Opponent in updateMpGameUI
+    const myName = el.mpScoreP1Label.textContent.replace('🟢 ', '');
+    const oppName = el.mpScoreP2Label.textContent.replace('🔴 ', '');
 
-    el.rsPlayer.textContent = data.score.player1;
+    el.resPlayerEmoji.textContent = G_EMOJI[myGesture] || '❓';
+    el.resPlayerGesture.textContent = myGesture;
+    el.resAiEmoji.textContent = G_EMOJI[oppGesture] || '❓';
+    el.resAiGesture.textContent = oppGesture;
+
+    el.rsPlayer.textContent = myScore;
     el.rsDraw.textContent = data.score.draw;
-    el.rsAi.textContent = data.score.player2;
+    el.rsAi.textContent = oppScore;
+
+    el.rsPlayerLabel.textContent = myName;
+    el.rsAiLabel.textContent = oppName;
 
     // Set text labels inside showdown card
-    document.querySelector('.showdown-player .showdown-name').textContent = p1Name;
-    document.querySelector('.showdown-ai .showdown-name').textContent = p2Name;
+    document.querySelector('.showdown-player .showdown-name').textContent = myName;
+    document.querySelector('.showdown-ai .showdown-name').textContent = oppName;
 
     // Determine winner client-side color
     if (data.result === 'SERI') {
       el.resultTitle.textContent = 'SERI!';
       el.resultTitle.className = 'result-title draw';
     } else {
-      const winnerName = (data.result === 'player1') ? p1Name : p2Name;
+      const winnerName = (data.result === mpSlot) ? myName : oppName;
       el.resultTitle.textContent = `${winnerName} MENANG!`;
-      el.resultTitle.className = 'result-title win';
+      // Use green (.win) if local player wins, red (.lose) if opponent wins
+      el.resultTitle.className = (data.result === mpSlot) ? 'result-title win' : 'result-title lose';
 
       // Fire confetti particles
-      if ((data.result === 'player1' && mpSlot === 'player1') || (data.result === 'player2' && mpSlot === 'player2')) {
+      if (data.result === mpSlot) {
         runParticles('win');
       } else {
         runParticles('lose');
@@ -586,9 +628,13 @@ function showResultPage(data) {
     el.resPlayerGesture.textContent = data.player;
     el.resAiEmoji.textContent = G_EMOJI[data.ai] || '❓';
     el.resAiGesture.textContent = data.ai;
+    
     el.rsPlayer.textContent = data.score.player;
     el.rsDraw.textContent = data.score.draw;
     el.rsAi.textContent = data.score.ai;
+
+    el.rsPlayerLabel.textContent = 'Kamu';
+    el.rsAiLabel.textContent = 'AI';
 
     document.querySelector('.showdown-player .showdown-name').textContent = 'Kamu';
     document.querySelector('.showdown-ai .showdown-name').textContent = 'AI';
@@ -751,7 +797,7 @@ function resetUpload() {
   el.uploadDropInner.style.display = 'flex';
   el.uploadResultPanel.style.display = 'none';
   el.uploadLoading.style.display = 'none';
-  el.fileInput.value = '';
+    el.fileInput.value = '';
   uploadDetectedGesture = null;
   el.playUploadBtn.disabled = true;
 }
@@ -759,6 +805,35 @@ function resetUpload() {
 // ═══════════════════════════════════════════
 // MULTIPLAYER ROOM & LOBBY HANDLERS
 // ═══════════════════════════════════════════
+
+const nameAdjectives = [
+  'Bebek', 'Kucing', 'Panda', 'Elang', 'Harimau', 'Burung', 'Rubah', 'Naga',
+  'Singa', 'Hiu', 'Semut', 'Lebah', 'Monyet', 'Serigala', 'Tupai', 'Siput',
+  'Katak', 'Kelinci', 'Domba', 'Ayam', 'Paus', 'Ular', 'Buaya', 'Gurita', 'Beruang'
+];
+const nameNouns = [
+  'Sakti', 'Terbang', 'Ganas', 'Ngesot', 'Ceria', 'Santuy', 'Berani', 'Misterius',
+  'Galak', 'Malas', 'Ninja', 'Cyborg', 'Imut', 'Rebahan', 'Gesit', 'Ngantuk',
+  'Ngebut', 'Nyasar', 'Keren', 'Barbar', 'Cerdik', 'Lucu', 'Polos', 'Sultan', 'Estetik'
+];
+
+function generateRandomName() {
+  const adj = nameAdjectives[Math.floor(Math.random() * nameAdjectives.length)];
+  const noun = nameNouns[Math.floor(Math.random() * nameNouns.length)];
+  return `${adj} ${noun}`;
+}
+
+// Initial random name on load
+if (el.mpPlayerNameInput) {
+  el.mpPlayerNameInput.value = generateRandomName();
+}
+
+if (el.btnRandomName) {
+  el.btnRandomName.addEventListener('click', () => {
+    el.mpPlayerNameInput.value = generateRandomName();
+  });
+}
+
 el.btnCreateRoom.addEventListener('click', async () => {
   const name = el.mpPlayerNameInput.value.trim() || 'Pemain 1';
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -872,6 +947,12 @@ function initMultiplayerFirebase(code, slot, name) {
         if (p1.gesture === p2.gesture) {
           result = "SERI";
           newScore.draw++;
+        } else if (p1.gesture === "TIDAK_TERDETEKSI") {
+          result = "player2";
+          newScore.player2++;
+        } else if (p2.gesture === "TIDAK_TERDETEKSI") {
+          result = "player1";
+          newScore.player1++;
         } else if (
           (p1.gesture === "BATU" && p2.gesture === "GUNTING") ||
           (p1.gesture === "GUNTING" && p2.gesture === "KERTAS") ||
@@ -963,18 +1044,19 @@ function setupMultiplayerGameUI(roomState) {
   const opponentSlot = mpSlot === 'player1' ? 'player2' : 'player1';
   const opponentPlayer = roomState.players[opponentSlot];
 
-  // Header score labels
-  el.mpScoreP1Label.textContent = `🟢 ${roomState.players.player1.name}`;
-  el.mpScoreP2Label.textContent = `🔴 ${roomState.players.player2.name}`;
+  // Header score labels (Left = You, Right = Opponent)
+  el.mpScoreP1Label.textContent = `🟢 ${localPlayer.name}`;
+  el.mpScoreP2Label.textContent = `🔴 ${opponentPlayer.name}`;
 
   // Sidebar slot indicators
   el.mpLocalLabel.textContent = `👤 ${localPlayer.name} (Kamu)`;
   el.mpOpponentLabel.textContent = `👤 ${opponentPlayer.name}`;
 
-  // Reset score cards
-  el.mpScorePlayer.textContent = roomState.score.player1;
+  // Reset score cards (Left = You, Right = Opponent)
+  const isP1 = (mpSlot === 'player1');
+  el.mpScorePlayer.textContent = isP1 ? roomState.score.player1 : roomState.score.player2;
   el.mpScoreDraw.textContent = roomState.score.draw;
-  el.mpScoreOpponent.textContent = roomState.score.player2;
+  el.mpScoreOpponent.textContent = isP1 ? roomState.score.player2 : roomState.score.player1;
 
   resetMpLocalArena();
 }
@@ -982,10 +1064,18 @@ function setupMultiplayerGameUI(roomState) {
 function updateMpGameUI(roomState) {
   if (PAGES[currentPage] !== 'page-mp-game') return;
 
-  // Score cards
-  el.mpScorePlayer.textContent = roomState.score.player1;
+  // Score cards (Left = You, Right = Opponent)
+  const isP1 = (mpSlot === 'player1');
+  const myScore = isP1 ? roomState.score.player1 : roomState.score.player2;
+  const oppScore = isP1 ? roomState.score.player2 : roomState.score.player1;
+
+  el.mpScorePlayer.textContent = myScore;
   el.mpScoreDraw.textContent = roomState.score.draw;
-  el.mpScoreOpponent.textContent = roomState.score.player2;
+  el.mpScoreOpponent.textContent = oppScore;
+
+  // Also update mini nav score
+  el.nsPlayer.textContent = myScore;
+  el.nsAi.textContent = oppScore;
 
   // Sync slot status (waiting for submissions)
   const opponentSlot = mpSlot === 'player1' ? 'player2' : 'player1';
@@ -1212,8 +1302,8 @@ function displayMpRoundResult(roundData) {
 
   // Determine relative result
   let outcome = 'SERI';
-  if (roundData.result !== 'SERI') {
-    outcome = (roundData.result === mpSlot) ? 'MENANG' : 'KALAH';
+  if (roundData.round_result !== 'SERI') {
+    outcome = (roundData.round_result === mpSlot) ? 'MENANG' : 'KALAH';
   }
 
   // Arena outcome banner
@@ -1224,7 +1314,7 @@ function displayMpRoundResult(roundData) {
   setTimeout(() => {
     // Show game result page
     const finalPayload = {
-      result: roundData.result,
+      result: roundData.round_result,
       player1_gesture: roundData.player1_gesture,
       player2_gesture: roundData.player2_gesture,
       score: roundData.score

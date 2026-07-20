@@ -10,7 +10,7 @@ import { RoomLifecycleManager } from "./roomLifecycleManager.js";
 
 import { firebaseConfig, API, G_EMOJI, RESULTS, PAGES } from "./constants.js";
 import { runParticles, stopParticles } from "./particles.js";
-// Initialize Firebase
+import { showToast } from "./toast.js";
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -1262,16 +1262,6 @@ $('btnLeaveMpGame').addEventListener('click', () => {
 });
 
 
-// ═══════════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════════
-let toastTimer;
-function showToast(msg, ms = 3000) {
-  el.toast.textContent = msg;
-  el.toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.toast.classList.remove('show'), ms);
-}
 
 // ═══════════════════════════════════════════
 // HELPERS & INITIALIZATION

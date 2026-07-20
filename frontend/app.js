@@ -3,6 +3,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { AFKManager } from "./afkTimer.js";
 import { RematchManager } from "./rematchManager.js";
+import { PopupManager } from "./popupManager.js";
+import { RoomLifecycleManager } from "./roomLifecycleManager.js";
 
 // ⚠️ PASTE KONFIGURASI FIREBASE KAMU DI SINI ⚠️
 const firebaseConfig = {
@@ -222,6 +224,27 @@ const afkManager = new AFKManager(5 * 60 * 1000, () => {
 
 // Initialize Rematch Manager
 const rematchManager = new RematchManager(update, showToast);
+
+// Initialize Popup & Lifecycle Managers
+const popupManager = new PopupManager(
+  $('nbPopupOverlay'),
+  $('nbPopupTitle'),
+  $('nbPopupMsg'),
+  $('nbPopupBtn')
+);
+
+const roomLifecycleManager = new RoomLifecycleManager(
+  update,
+  remove,
+  (title, msg, onOk) => popupManager.showPopup(title, msg, onOk),
+  () => {
+    cleanUpMpSession();
+    // Redirect to Multiplayer Lobby Setup
+    el.lobbySetup.style.display = 'block';
+    el.lobbyWaiting.style.display = 'none';
+    goTo(4);
+  }
+);
 
 // ═══════════════════════════════════════════
 // PAGE NAVIGATION
@@ -922,10 +945,11 @@ function initMultiplayerFirebase(code, slot, name) {
 
   fbUnsubscribe = onValue(roomRef, async (snapshot) => {
     if (!snapshot.exists()) {
-      showToast('🔌 Room telah ditutup atau host keluar.');
-      leaveMpRoom();
-      return;
+      // Handled by roomLifecycleManager
     }
+
+    const isDead = await roomLifecycleManager.checkRoomStatus(snapshot, roomRef, mpSlot);
+    if (isDead) return;
 
     const roomState = snapshot.val();
 
@@ -1023,32 +1047,31 @@ function updateLobbyUI(roomState) {
   }
 }
 
-function leaveMpRoom() {
+function cleanUpMpSession() {
   if (fbUnsubscribe) {
     fbUnsubscribe();
     fbUnsubscribe = null;
   }
-
   afkManager.clear();
-
-  if (mpRoomCode) {
-    const roomRef = ref(db, `rooms/${mpRoomCode}`);
-    if (mpSlot === 'player1') {
-      remove(roomRef); // Host leaves, delete room
-    } else if (mpSlot === 'player2') {
-      update(roomRef, {
-        "players/player2/joined": false,
-        "players/player2/name": "",
-        "state": "WAITING"
-      });
-    }
-  }
-
   mpSlot = null;
   mpRoomCode = null;
   stopMpCamera();
   resetMpLocalArena();
-  goTo(2); // Go back to mode select
+}
+
+async function leaveMpRoom() {
+  if (mpRoomCode && mpSlot) {
+    const roomRef = ref(db, `rooms/${mpRoomCode}`);
+    const slot = mpSlot; // Save slot before cleanup
+    
+    // Clean up session FIRST so we don't trigger our own local onValue listener
+    cleanUpMpSession();
+    
+    // Then update Firebase
+    await roomLifecycleManager.leaveRoom(roomRef, slot);
+  } else {
+    cleanUpMpSession();
+  }
 }
 
 // ═══════════════════════════════════════════

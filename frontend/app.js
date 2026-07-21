@@ -1,24 +1,24 @@
 import { HandLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
-import { handLandmarker, runningMode, setRunningMode, createHandLandmarker, detectGestureLocal } from "./handDetection.js";
-import { $, el } from "./domRefs.js";
+import { handLandmarker, runningMode, setRunningMode, createHandLandmarker, detectGestureLocal } from './js/detection/handDetection.js';
+import { $, el } from './js/core/domRefs.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { AFKManager } from "./afkTimer.js";
-import { RematchManager } from "./rematchManager.js";
-import { PopupManager } from "./popupManager.js";
-import { RoomLifecycleManager } from "./roomLifecycleManager.js";
+import { AFKManager } from './js/multiplayer/afkTimer.js';
+import { RematchManager } from './js/multiplayer/rematchManager.js';
+import { PopupManager } from './js/multiplayer/popupManager.js';
+import { RoomLifecycleManager } from './js/multiplayer/roomLifecycleManager.js';
 
-import { firebaseConfig, API, G_EMOJI, RESULTS, PAGES } from "./constants.js";
-import { runParticles, stopParticles } from "./particles.js";
-import { showToast } from "./toast.js";
-import { setupGameMode, startCamera, stopCamera, runCountdown, showCountNum, captureAndDetect, playRound, showResultPage, updatePlayerUI, resetPlayerUI, resetAIUI, resetCapture, drawAnnotation, clearAnnotation, updateScoreDisplay, bumpScore, handleFile, resetUpload, stream, camActive, isCapturing, uploadDetectedGesture, lastRoundData, initScoreDisplay, resetLocalScores, spInputMode, setSpInputMode } from './singlePlayer.js';
+import { firebaseConfig, API, G_EMOJI, RESULTS, PAGES } from './js/core/constants.js';
+import { runParticles, stopParticles } from './js/game/particles.js';
+import { showToast } from './js/core/toast.js';
+import { setupGameMode, startCamera, stopCamera, runCountdown, showCountNum, captureAndDetect, playRound, showResultPage, updatePlayerUI, resetPlayerUI, resetAIUI, resetCapture, drawAnnotation, clearAnnotation, updateScoreDisplay, bumpScore, handleFile, resetUpload, stream, camActive, isCapturing, uploadDetectedGesture, lastRoundData, initScoreDisplay, resetLocalScores, spInputMode, setSpInputMode } from './js/game/singlePlayer.js';
 import {
   mpRoomCode, mpSlot, mpStream, mpCamActive, mpDetectedGesture,
   generateRandomName, initMultiplayerFirebase, updateLobbyUI, cleanUpMpSession,
   leaveMpRoom, setupMultiplayerGameUI, updateMpGameUI, startMpCamera, stopMpCamera,
   handleMpUpload, runMpCountdown, captureMpFrame, sendMpGesture, displayMpRoundResult,
   resetMpArenaForNextRound, resetMpLocalArena, clearMpAnnotation
-} from './multiplayer.js';
+} from './js/multiplayer/multiplayer.js';
 
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
@@ -26,7 +26,7 @@ export const db = getDatabase(app);
 
 
 
-import { goTo, goBack, currentPage } from './navigation.js';
+import { goTo, goBack, currentPage } from './js/core/navigation.js';
 
 export let gameMode = 'webcam'; // 'webcam' | 'upload' | 'multiplayer'
 

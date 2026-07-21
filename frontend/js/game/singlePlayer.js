@@ -1,12 +1,12 @@
 import { HandLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
-import { $, el } from "./domRefs.js";
-import { handLandmarker, runningMode, setRunningMode, detectGestureLocal } from "./handDetection.js";
-import { showToast } from "./toast.js";
-import { runParticles, stopParticles } from "./particles.js";
-import { G_EMOJI, RESULTS } from "./constants.js";
-import { gameMode, sleep } from "./app.js";
-import { goTo, currentPage } from "./navigation.js";
-import { mpSlot, mpRoomCode } from "./multiplayer.js";
+import { $, el } from '../core/domRefs.js';
+import { handLandmarker, runningMode, setRunningMode, detectGestureLocal } from '../detection/handDetection.js';
+import { showToast } from '../core/toast.js';
+import { runParticles, stopParticles } from './particles.js';
+import { G_EMOJI, RESULTS } from '../core/constants.js';
+import { gameMode, sleep } from '../../app.js';
+import { goTo, currentPage } from '../core/navigation.js';
+import { mpSlot, mpRoomCode } from '../multiplayer/multiplayer.js';
 
 // State
 export let stream = null;

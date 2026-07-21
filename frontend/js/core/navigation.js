@@ -1,7 +1,7 @@
 import { el, $ } from './domRefs.js';
 import { PAGES } from './constants.js';
-import { stopCamera } from './singlePlayer.js';
-import { stopMpCamera, leaveMpRoom } from './multiplayer.js';
+import { stopCamera } from '../game/singlePlayer.js';
+import { stopMpCamera, leaveMpRoom } from '../multiplayer/multiplayer.js';
 
 export let currentPage = 0;
 

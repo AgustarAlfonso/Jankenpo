@@ -3,7 +3,7 @@ jest.setTimeout(30000);
 describe('RematchManager Unit Tests (Browser)', () => {
   beforeAll(async () => {
     // Navigate to the local server
-    await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://127.0.0.1:3000', { waitUntil: 'domcontentloaded' });
   });
 
   it('should call updateFirebaseFn with correct payload when requestRematch is called', async () => {

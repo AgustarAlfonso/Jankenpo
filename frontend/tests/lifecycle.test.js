@@ -3,7 +3,7 @@ jest.setTimeout(30000);
 describe('RoomLifecycleManager Unit Tests (Browser)', () => {
   beforeAll(async () => {
     // Navigate to the local server
-    await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://127.0.0.1:3000', { waitUntil: 'domcontentloaded' });
   });
 
   it('Host leaves room -> removes room completely', async () => {
@@ -103,7 +103,7 @@ describe('RoomLifecycleManager Unit Tests (Browser)', () => {
 
 describe('PopupManager Unit Tests (Browser)', () => {
   beforeAll(async () => {
-    await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://127.0.0.1:3000', { waitUntil: 'domcontentloaded' });
   });
 
   it('showPopup sets text content and adds active class', async () => {

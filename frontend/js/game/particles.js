@@ -1,4 +1,4 @@
-import { el } from './domRefs.js';
+import { el } from '../core/domRefs.js';
 
 let particleAnimId = null;
 let particles = [];

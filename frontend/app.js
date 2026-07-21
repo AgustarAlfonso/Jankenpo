@@ -321,7 +321,7 @@ el.btnJoinRoom.addEventListener('click', async () => {
 // Setup room link helper
 el.btnCopyLink.addEventListener('click', () => {
   if (!mpRoomCode) return;
-  const link = `${window.location.protocol}//${window.location.host}/room/${mpRoomCode}`;
+  const link = `${window.location.protocol}//${window.location.host}/?room=${mpRoomCode}`;
   navigator.clipboard.writeText(link).then(() => {
     showToast('📋 Link room disalin!');
   }).catch(() => {
@@ -373,16 +373,17 @@ async function init() {
   initScoreDisplay();
 
   // Parse URL parameter to check direct room link
-  const pathParts = window.location.pathname.split('/');
-  const roomIdx = pathParts.indexOf('room');
-  if (roomIdx !== -1 && pathParts[roomIdx + 1]) {
-    const code = pathParts[roomIdx + 1].toUpperCase();
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomCode = urlParams.get('room');
+  if (roomCode) {
+    const code = roomCode.toUpperCase();
     el.mpRoomCodeInput.value = code;
     gameMode = 'multiplayer';
     el.lobbySetup.style.display = 'block';
     el.lobbyWaiting.style.display = 'none';
     goTo(4); // Direct lobby page entry
     showToast(`🔗 Masuk via link room! Silahkan klik Gabung.`);
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
 
   // Handle document fonts load smoothly

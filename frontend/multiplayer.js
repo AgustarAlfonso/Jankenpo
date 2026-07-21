@@ -3,7 +3,8 @@ import { handLandmarker, detectGestureLocal, runningMode, setRunningMode } from 
 import { showToast } from './toast.js';
 import { G_EMOJI, RESULTS, PAGES } from './constants.js';
 import { ref, set, get, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { db, afkManager, rematchManager, popupManager, roomLifecycleManager, goTo, currentPage } from './app.js';
+import { db, afkManager, rematchManager, popupManager, roomLifecycleManager } from './app.js';
+import { goTo, currentPage } from './navigation.js';
 import { showResultPage } from './singlePlayer.js';
 import { HandLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
 

@@ -119,6 +119,9 @@ export async function captureAndDetect() {
   let startTimeMs = performance.now();
   const results = handLandmarker.detectForVideo(el.webcamVideo, startTimeMs);
 
+  // Freeze the video frame to let user see their captured gesture
+  el.webcamVideo.pause();
+
   let gesture = "TIDAK_TERDETEKSI";
   if (results.landmarks && results.landmarks.length > 0) {
     gesture = detectGestureLocal(results.landmarks);
@@ -323,6 +326,9 @@ export function resetAIUI() {
 export function resetCapture() {
   isCapturing = false;
   el.captureBtn.disabled = !camActive;
+  if (camActive && el.webcamVideo) {
+    el.webcamVideo.play().catch(e => console.error(e));
+  }
 }
 
 export function drawAnnotation(base64) {

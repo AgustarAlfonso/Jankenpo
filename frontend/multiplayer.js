@@ -366,6 +366,9 @@ export async function captureMpFrame() {
   let startTimeMs = performance.now();
   const results = handLandmarker.detectForVideo(el.mpWebcamVideo, startTimeMs);
 
+  // Freeze the video frame to let user see their captured gesture
+  el.mpWebcamVideo.pause();
+
   let gesture = "TIDAK_TERDETEKSI";
   if (results.landmarks && results.landmarks.length > 0) {
     gesture = detectGestureLocal(results.landmarks);
@@ -388,8 +391,11 @@ export async function captureMpFrame() {
   if (gesture !== 'TIDAK_TERDETEKSI') {
     sendMpGesture(gesture);
   } else {
-    showToast('🤔 Gesture tidak terbaca. Silahkan coba lagi.');
+    showToast('🤔 Gesture tidak jelas. Coba lagi.');
     el.mpCaptureBtn.disabled = false;
+    if (mpCamActive && el.mpWebcamVideo) {
+      el.mpWebcamVideo.play().catch(e => console.error(e));
+    }
   }
 }
 
@@ -463,6 +469,10 @@ export function resetMpLocalArena() {
   el.mpPlayerTagEmoji.textContent = '❓';
   el.mpPlayerTagLabel.textContent = 'Siapkan tangan...';
   el.mpCaptureBtn.disabled = !mpCamActive;
+
+  if (mpCamActive && el.mpWebcamVideo) {
+    el.mpWebcamVideo.play().catch(e => console.error(e));
+  }
 
   // Reset upload area layout
   el.mpUploadZone.style.display = 'none';

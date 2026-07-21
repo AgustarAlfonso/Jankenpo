@@ -6,6 +6,7 @@ import { ref, set, get, onValue, update, remove, onDisconnect } from "https://ww
 import { db, afkManager, rematchManager, popupManager, roomLifecycleManager } from '../../app.js';
 import { goTo, currentPage } from '../core/navigation.js';
 import { showResultPage } from '../game/singlePlayer.js';
+import { playArenaRevealAnimation } from '../game/animations.js';
 import { HandLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.mjs";
 
 export let ws = null;
@@ -440,6 +441,9 @@ export function displayMpRoundResult(roundData) {
   el.mpVsResult.textContent = cfg.banner;
   el.mpVsResult.className = `vs-result ${cfg.cls}`;
 
+  // Play arena reveal animation
+  playArenaRevealAnimation(true);
+
   setTimeout(() => {
     // Show game result page
     const finalPayload = {
@@ -449,7 +453,7 @@ export function displayMpRoundResult(roundData) {
       score: roundData.score
     };
     showResultPage(finalPayload);
-  }, 1600);
+  }, 2400); // Wait for animation to finish
 }
 
 export function resetMpArenaForNextRound() {

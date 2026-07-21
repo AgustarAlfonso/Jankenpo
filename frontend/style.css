@@ -1,4 +1,4 @@
-﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    JankenpoVision â€” Cartoonic / Playful UI
    Tone: Toy-like Â· Editorial Â· Fun arcade energy
    Domain: Kartu permainan, komik, playground, arcade
@@ -653,7 +653,6 @@ html, body {
 
 .result-badge {
   font-size:7rem; line-height:1;
-  animation: badgePop 0.6s 0.1s var(--ease) both;
   filter: drop-shadow(6px 6px 0 var(--ink));
 }
 @keyframes badgePop { 0%{transform:scale(0) rotate(-20deg);opacity:0} 100%{transform:scale(1) rotate(0);opacity:1} }
@@ -661,7 +660,6 @@ html, body {
 .result-title {
   font-family:var(--font-d); font-size:clamp(3rem,9vw,6rem);
   line-height:1.2; padding: 10px 0; margin: 0;
-  animation:popIn 0.5s 0.3s var(--ease) both;
   -webkit-text-stroke: 4px var(--ink); text-shadow: 6px 6px 0 var(--ink);
 }
 .result-title.win  { color:var(--mint); }
@@ -672,7 +670,6 @@ html, body {
   display:flex; align-items:center; gap:3rem;
   background:var(--white); border: 4px solid var(--ink); border-radius: 20px;
   padding:2rem 3rem; box-shadow: 8px 8px 0 var(--ink);
-  animation:popIn 0.5s 0.4s var(--ease) both;
 }
 .showdown-side { display:flex; flex-direction:column; align-items:center; gap:1rem; }
 .showdown-emoji { font-size:6rem; line-height:1; }
@@ -691,7 +688,6 @@ html, body {
   display:flex; align-items:center; gap:2rem;
   background:var(--white); border: 4px solid var(--ink); border-radius: 20px;
   padding:1.5rem 3rem; box-shadow: 8px 8px 0 var(--ink);
-  animation:popIn 0.5s 0.5s var(--ease) both;
 }
 .rs-item { display:flex; flex-direction:column; align-items:center; gap:0.5rem; }
 .rs-val { font-family:var(--font-d); font-size:3.5rem; -webkit-text-stroke:2px var(--ink); text-shadow: 4px 4px 0 var(--ink); }
@@ -703,7 +699,6 @@ html, body {
 
 .result-actions {
   display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;
-  animation:popIn 0.5s 0.6s var(--ease) both;
 }
 
 .particle-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; width:100%; height:100%; }
@@ -1078,8 +1073,93 @@ html, body {
   transform: translate(6px, 6px);
   box-shadow: 0px 0px 0 var(--ink);
 }
- 
- 
+ 
+ 
+
+/* ── Cut-in Overlay (Persona Split-Screen) ──────────────────────────────────/* Overlay that contains everything */
+.cutin-overlay {
+  position: fixed !important; 
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  background: var(--white);
+  transform: translateZ(100px); /* Hardware layer to prevent webcam bleed */
+}
+.cutin-side {
+  position: absolute; top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  border-left: 6px solid var(--ink);
+  border-right: 6px solid var(--ink);
+}
+.cutin-left {
+  left: 0; background: var(--mint); width: 65vw;
+  /* Lightning bolt cut */
+  clip-path: polygon(0 0, 92.3% 0, 61.53% 45%, 92.3% 55%, 61.53% 100%, 0 100%);
+  transform: translateX(-150%);
+  align-items: flex-end;
+  padding-right: 30vw;
+  filter: drop-shadow(8px 8px 0 var(--ink));
+}
+.cutin-right {
+  right: 0; background: var(--coral); width: 65vw;
+  /* Lightning bolt cut inverted */
+  clip-path: polygon(41.53% 0, 100% 0, 100% 100%, 10.76% 100%, 41.53% 55%, 10.76% 45%);
+  transform: translateX(150%);
+  align-items: flex-start;
+  padding-left: 30vw;
+  filter: drop-shadow(-8px -8px 0 var(--ink));
+}
+
+/* Typography inside the cut-in */
+.cutin-name {
+  font-family: var(--font-d);
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--white);
+  -webkit-text-stroke: 3px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  margin-bottom: -1rem;
+  z-index: 2;
+  transform: rotate(-5deg);
+  background: var(--ink);
+  padding: 0 1rem;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.cutin-emoji {
+  font-size: clamp(8rem, 15vw, 15rem);
+  line-height: 1;
+  filter: drop-shadow(8px 8px 0 var(--ink));
+}
+
+/* Banner Result */
+.cutin-vs-banner {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin: auto;
+  height: max-content;
+  width: max-content;
+  font-family: var(--font-d);
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--white);
+  background: var(--ink);
+  padding: 0.5rem 3rem;
+  border: 6px solid var(--white);
+  box-shadow: 10px 10px 0 var(--ink);
+  transform: scale(0) rotate(-10deg);
+  opacity: 0;
+  z-index: 10001;
+  letter-spacing: 4px;
+}
+.cutin-vs-banner.win { color: var(--mint); -webkit-text-stroke: 2px var(--ink); text-shadow: 4px 4px 0 var(--ink);}
+.cutin-vs-banner.lose { color: var(--coral); -webkit-text-stroke: 2px var(--ink); text-shadow: 4px 4px 0 var(--ink);}
+.cutin-vs-banner.draw { color: var(--yellow); -webkit-text-stroke: 2px var(--ink); text-shadow: 4px 4px 0 var(--ink);}
 
 
 /* Particles Overlay */

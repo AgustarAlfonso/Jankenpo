@@ -7,6 +7,7 @@ import { G_EMOJI, RESULTS } from '../core/constants.js';
 import { gameMode, sleep } from '../../app.js';
 import { goTo, currentPage } from '../core/navigation.js';
 import { mpSlot, mpRoomCode } from '../multiplayer/multiplayer.js';
+import { playRevealAnimation, playArenaRevealAnimation } from './animations.js';
 
 // State
 export let stream = null;
@@ -205,10 +206,13 @@ export async function playRound(gesture) {
     el.vsResult.textContent = cfg.banner;
     el.vsResult.className = `vs-result ${cfg.cls}`;
 
+    // Play arena reveal animation
+    playArenaRevealAnimation(false);
+
     // Update score
     updateScoreDisplay(data.score);
 
-    await sleep(1200);
+    await sleep(2000); // Wait for animation to finish
     showResultPage(data);
 
   } catch (err) {
@@ -300,6 +304,7 @@ export function showResultPage(data) {
   }
 
   goTo(6, { keepCamera: true });
+  playRevealAnimation();
   resetCapture();
 }
 

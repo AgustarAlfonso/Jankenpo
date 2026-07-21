@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=17" />
 </head>
 <body>
 
@@ -534,10 +534,25 @@
     </div>
   </div>
 
+  <!-- Cut-in Overlay (Persona Style) -->
+  <div class="cutin-overlay" id="cutinOverlay">
+    <div class="cutin-side cutin-left" id="cutinLeft">
+      <div class="cutin-name" id="cutinLeftName">KAMU</div>
+      <div class="cutin-emoji" id="cutinLeftEmoji">✊</div>
+    </div>
+    <div class="cutin-side cutin-right" id="cutinRight">
+      <div class="cutin-name" id="cutinRightName">AI</div>
+      <div class="cutin-emoji" id="cutinRightEmoji">🖐️</div>
+    </div>
+    <div class="cutin-vs-banner" id="cutinVsBanner">MENANG!</div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
+  <!-- Anime.js for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <!-- Load app as module -->
-  <script type="module" src="app.js?v=10"></script>
+  <script type="module" src="app.js?v=11"></script>
 </body>
 </html>

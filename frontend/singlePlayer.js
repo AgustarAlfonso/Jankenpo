@@ -4,7 +4,8 @@ import { handLandmarker, runningMode, setRunningMode, detectGestureLocal } from 
 import { showToast } from "./toast.js";
 import { runParticles, stopParticles } from "./particles.js";
 import { G_EMOJI, RESULTS } from "./constants.js";
-import { gameMode, mpSlot, goTo, sleep, mpRoomCode, currentPage } from "./app.js";
+import { gameMode, goTo, sleep, currentPage } from "./app.js";
+import { mpSlot, mpRoomCode } from "./multiplayer.js";
 
 // State
 export let stream = null;
